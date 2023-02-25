@@ -1,0 +1,7 @@
+python-dotenv
+llama-index
+streamlit
+streamlit-chat
+sqlalchemy
+black
+isort
