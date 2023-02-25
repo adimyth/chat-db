@@ -1,5 +1,6 @@
-python-dotenv
 llama-index
+psycopg2-binary
+python-dotenv
 streamlit
 streamlit-chat
 sqlalchemy

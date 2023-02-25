@@ -16,18 +16,22 @@ response = Response()
 tables = response.get_table_names()
 table = st.selectbox("Choose data to query against:", tables)
 
+# Create index
+response.create_index(table)
+
+# Set app title
 st.title("ChatGPT-like Web App")
 
-# storing the chat
+# Initialise session state
 if "generated" not in st.session_state:
     st.session_state["generated"] = []
 if "past" not in st.session_state:
     st.session_state["past"] = []
 
-# get user input
+# Get user input
 user_input = st.text_input("You:", key="input")
 
-# generate response
+# Generate response
 if user_input:
     output = response.generate_response(user_input)
     # store the output

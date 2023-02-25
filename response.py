@@ -1,5 +1,5 @@
 import os
-
+from pprint import pprint
 from dotenv import load_dotenv
 from llama_index import GPTSQLStructStoreIndex, SQLDatabase
 from sqlalchemy import create_engine
@@ -19,12 +19,7 @@ class Response:
         self._engine = create_engine(
             f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
         )
-        sql_database = SQLDatabase(self._engine, include_tables=["city_stats"])
-        self.index = GPTSQLStructStoreIndex(
-            [],
-            sql_database=sql_database,
-            table_name="city_stats",
-        )
+        # self.index = None
 
     def get_table_names(self):
         table_names = self._engine.execute(
@@ -33,6 +28,16 @@ class Response:
         # split by underscore & convert to title case
         table_names = [name[0].replace("_", " ").title() for name in table_names]
         return table_names
+    
+    def create_index(self, table_name):
+        table_name = table_name.replace(" ", "_").lower()
+        sql_database = SQLDatabase(self._engine, schema="analytics", include_tables=[table_name])
+        self.index = GPTSQLStructStoreIndex(
+            [],
+            sql_database=sql_database,
+            table_name=f"{table_name}",
+            schema="analytics",
+        )
 
     def generate_response(self, user_input):
         response = self.index.query(user_input)
