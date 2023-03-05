@@ -1,10 +1,14 @@
 #!/bin/bash
 source .env
-rm -r .venv
 
 # Create virtualenv
-echo -e "[INFO] Creating virtualenv\n\n"
-python3 -m venv .venv
+if [ -d ".venv" ]; then
+    echo -e "[INFO] Virtualenv already exists\n\n"
+else
+    echo -e "[INFO] Virtualenv does not exist\n\n"
+    echo -e "[INFO] Creating virtualenv\n\n"
+    python3 -m venv .venv
+fi
 
 # Activate virtualenv
 source .venv/bin/activate
@@ -18,4 +22,5 @@ python3 -m pip install -r requirements.txt
 
 # Run the app
 echo -e "\n\n[INFO] Running the app\n\n"
-streamlit run app.py
+# streamlit run streamlit_app/app.py
+streamlit run streamlit_app/pages/signup.py

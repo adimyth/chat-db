@@ -6,3 +6,8 @@ streamlit-chat
 sqlalchemy
 black
 isort
+streamlit-supabase-auth
+supabase
+uvicorn
+fastapi
+cryptography

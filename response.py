@@ -1,8 +1,10 @@
+import json
 import os
 from pprint import pprint
+
 from dotenv import load_dotenv
 from langchain import OpenAI
-from llama_index import GPTSQLStructStoreIndex, SQLDatabase, LLMPredictor
+from llama_index import GPTSQLStructStoreIndex, LLMPredictor, SQLDatabase
 from sqlalchemy import create_engine
 
 load_dotenv()
@@ -46,6 +48,13 @@ class Response:
         )
 
     def generate_response(self, user_input):
-        list_responses = self.index.query(user_input).response
-        list_responses = [response for response in list_responses if response[0] != ""]
-        return " ".join(response for response in list_responses)
+        query_response = self.index.query(user_input, mode="default")
+        sql_query = query_response.extra_info["sql_query"]
+        print("\n\n\n")
+        print("[INFO] User Input: ", user_input)
+        print("[INFO] SQL Query: ", sql_query)
+        list_reponse = [str(tup[0]) for tup in eval(query_response.response)]
+        final_response = ", ".join(list_reponse)
+        print("[INFO] Model Response: ", final_response)
+        print("\n")
+        return final_response
