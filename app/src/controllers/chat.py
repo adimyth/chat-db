@@ -19,34 +19,51 @@ supabase: Client = create_client(
 
 
 @chat_router.get("/")
-async def get_chat(user_id: str, connection_id: str = None, chat_id: str = None):
+def get_chat(user_id: str, connection_id: str = None, chat_id: str = None):
     # return error response if user_id is None
-    if user_id is None:
-        return HTTPException(status_code=400, detail="user_id is required")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="user_id is required")
 
-    # create query based on user_id
-    query = f"user_id=eq.{user_id}"
+    query_dict = {}
+    query_dict["user_id"] = user_id
 
-    # add connection_id and chat_id to query if provided
     if chat_id:
-        query += f" AND chat_id=eq.{chat_id} "
+        query_dict["chat_id"] = chat_id
     if connection_id:
-        query += f" AND connection_id=eq.{connection_id} "
+        query_dict["connection_id"] = connection_id
 
-    # fetch data from supabase
-    response = await supabase.from_("chat").select("*").text(query).execute()
-    return {"all_chats": response}
+    response = (
+        supabase.from_("chat_session")
+        .select("*")
+        .match(query_dict)
+        .execute()
+        .dict()["data"]
+    )
+    return response
 
 
 @chat_router.post("/")
-async def create_chat(chat: ChatCreateRequest) -> Chat:
-    # create chat in supabase
-    response = await supabase.from_("chat").insert(chat.dict()).execute()
+def create_chat(chat: ChatCreateRequest) -> Chat:
+    response = (
+        supabase.from_("chat_session").insert(chat.dict()).execute().dict()["data"][0]
+    )
     return response
 
 
-@chat_router.put("/")
-async def update_chat(chat: ChatUpdate) -> Chat:
-    # update chat in supabase
-    response = await supabase.from_("chat").update(chat.dict()).execute()
-    return response
+@chat_router.patch("/")
+def update_chat(chat_id: str, chat: ChatUpdate) -> Chat:
+    if not chat_id:
+        raise HTTPException(status_code=400, detail="chat_id is required")
+    try:
+        response = (
+            supabase.from_("chat_session")
+            .update(chat.dict(exclude_unset=True))
+            .eq("chat_id", chat_id)
+            .execute()
+            .dict()["data"][0]
+        )
+        return response
+    except IndexError:
+        raise HTTPException(status_code=400, detail="Invalid chat_id")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

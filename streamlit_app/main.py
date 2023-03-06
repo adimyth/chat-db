@@ -1,51 +1,28 @@
+import os
+
 import streamlit as st
 from dotenv import load_dotenv
-from streamlit_chat import message
+from pages.connection import connections_app
+from streamlit_supabase_auth import login_form, logout_button
 
-from response import Response
-
-# Set app title and page layout
-st.set_page_config(page_title="Chat DB", page_icon=":speak_no_evil:")
-
-# Set app title
-st.title("Chat DB")
-
-# Initialising the response class
-response = Response()
-tables = response.get_table_names()
-table = st.selectbox("Choose data to query against:", tables)
-
-# Create index
-response.create_index(table)
-
-# Initialise session state
-if "generated" not in st.session_state:
-    st.session_state["generated"] = []
-if "past" not in st.session_state:
-    st.session_state["past"] = []
+load_dotenv()
 
 
-# Clear session state
-def clear_form():
-    st.session_state["input"] = ""
+def login():
+    st.set_page_config(page_title="Chat DB", page_icon=":speak_no_evil:")
+
+    session = login_form(
+        url=os.getenv("SUPABASE_URL"),
+        apiKey=os.getenv("SUPABASE_KEY"),
+        providers=["google", "github"],
+    )
+
+    if session:
+        with st.sidebar:
+            st.write(f"Welcome {session['user']['email']}")
+            logout_button()
+        connections_app(session["user"]["id"])
 
 
-with st.form("chat_form"):
-    # Get user input
-    user_input = st.text_area("You:", key="input")
-    # Add submit button
-    submit_button = st.form_submit_button(label="Submit")
-    clear_button = st.form_submit_button(label="Clear", on_click=clear_form)
-
-
-# Generate response
-if submit_button:
-    output = response.generate_response(user_input)
-    # store the output
-    st.session_state["past"].append(user_input)
-    st.session_state["generated"].append(output)
-
-if st.session_state["generated"]:
-    for i in range(len(st.session_state["generated"]) - 1, -1, -1):
-        message(st.session_state["generated"][i], key=str(i))
-        message(st.session_state["past"][i], is_user=True, key=str(i) + "_user")
+if __name__ == "__main__":
+    login()

@@ -57,13 +57,15 @@ def create_connection(
             .execute()
             .dict()["data"][0]
         )
-        return JSONResponse(status_code=201, content=response)
+        return response
     else:
         raise HTTPException(status_code=400, detail="Invalid connection")
 
 
 @connection_router.patch("/")
 def update_connection(connection_id: str, connection: ConnectionUpdateRequest) -> Any:
+    if not connection_id:
+        raise HTTPException(status_code=400, detail="connection_id is required")
     updated_connection = connection.dict(exclude_unset=True)
     if connection.db_password:
         updated_connection["db_encrypted_password"] = encrypt_password(
