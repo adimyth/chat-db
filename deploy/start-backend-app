@@ -14,12 +14,12 @@ fi
 source .venv/bin/activate
 
 # Upgrade pip
-python3 -m pip install --upgrade pip
+python3 -m pip install --quiet --upgrade pip
 
 # Install requirements
-echo -e "\n\n[INFO] Installing requirements\n\n"
-python3 -m pip install -r requirements.txt
+echo -e "[INFO] Installing requirements\n\n"
+python3 -m pip install -q -r requirements.txt
 
 # Run the app
-echo -e "\n\n[INFO] Running the app\n\n"
+echo -e "[INFO] Running the app\n\n"
 python3 -m uvicorn app.main:app --reload
