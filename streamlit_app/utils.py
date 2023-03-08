@@ -1,9 +1,20 @@
+import os
+
+import mysql.connector
+from cryptography.fernet import Fernet
 import requests
 import streamlit as st
 
 
-def get_connections(user_id):
-    response = requests.get(f"http://localhost:8000/db-connection?user_id={user_id}")
+def get_connections(user_id: str, connection_id: str = None):
+    if connection_id is None:
+        response = requests.get(
+            f"http://localhost:8000/db-connection?user_id={user_id}"
+        )
+    else:
+        response = requests.get(
+            f"http://localhost:8000/db-connection?user_id={user_id}&connection_id={connection_id}"
+        )
     if response.status_code == 200:
         connections = response.json()
         return connections
@@ -35,7 +46,6 @@ def update_connection(connection_id, payload):
     elif response.status_code == 400:
         st.error(response.json()["detail"])
     else:
-        print(response.json())
         st.error("Failed to update connection")
 
 
@@ -59,11 +69,12 @@ def get_chat_session_history(user_id, connection_id, chat_id):
         chat_session = response.json()
         if len(chat_session) == 0:
             st.info("No chat history found.")
-            return []
-        return chat_session[0]["chat_history"]
+            return None
+        else:
+            return chat_session[0]["chat_history"]
     else:
         st.error("Failed to fetch chat session.")
-        return []
+        return None
 
 
 def create_chat_session_history(payload):
@@ -91,5 +102,16 @@ def update_chat_session_history(chat_id, payload):
     elif response.status_code == 400:
         st.error(response.json()["detail"])
     else:
-        print(response.json())
         st.error("Failed to update chat session")
+
+
+def decrypt_password(token: str) -> str:
+    key = os.getenv("SECRET_KEY")
+    f = Fernet(key)
+    password = f.decrypt(token.encode())
+    return password.decode()
+
+
+def convert_timestamp(timestamp):
+    # convert 2023-03-08T15:36:56.931331+00:00 to 2023-03-08 15:36:56
+    return timestamp.split(".")[0].replace("T", " ")

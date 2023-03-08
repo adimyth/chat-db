@@ -14,7 +14,8 @@ def login():
     session = login_form(
         url=os.getenv("SUPABASE_URL"),
         apiKey=os.getenv("SUPABASE_KEY"),
-        providers=["google", "github"],
+        # Social logins are not working. Refer - https://github.com/sweatybridge/streamlit-supabase-auth/issues/15
+        # providers=["google", "github"],
     )
 
     if session:

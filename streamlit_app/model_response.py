@@ -1,35 +1,33 @@
-import json
-import os
-from pprint import pprint
+from urllib.parse import quote_plus
+
 
 from dotenv import load_dotenv
 from langchain import OpenAI
 from llama_index import GPTSQLStructStoreIndex, LLMPredictor, SQLDatabase
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 
 load_dotenv()
 
 
 # move everything to a class
-class Response:
-    def __init__(self):
-        db_host = os.getenv("DB_HOST")
-        db_port = os.getenv("DB_PORT")
-        db_name = os.getenv("DB_NAME")
-        db_user = os.getenv("DB_USER")
-        db_password = os.getenv("DB_PASSWORD")
-
-        self._engine = create_engine(
-            f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}",
-        )
-        # self.index = None
+class ModelResponse:
+    def __init__(
+        self, connection_type, db_host, db_port, db_name, db_username, db_password
+    ):
+        # encode password
+        db_password = quote_plus(db_password)
+        if connection_type == "postgres":
+            self._engine = create_engine(
+                f"postgresql://{db_username}:{db_password}@{db_host}:{db_port}/{db_name}",
+            )
+        else:
+            self._engine = create_engine(
+                f"mysql+pymysql://{db_username}:{db_password}@{db_host}:{db_port}/{db_name}",
+            )
 
     def get_table_names(self):
-        table_names = self._engine.execute(
-            "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
-        ).fetchall()
-        # split by underscore & convert to title case
-        table_names = [name[0].replace("_", " ").title() for name in table_names]
+        table_names = inspect(self._engine).get_table_names()
+        table_names = [name.replace("_", " ").title() for name in table_names]
         return table_names
 
     def create_index(self, table_name):

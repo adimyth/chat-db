@@ -1,25 +1,21 @@
 import streamlit as st
 from dotenv import load_dotenv
 from pages.chat_sessions import chat_sessions
-from utils import (
-    create_connection,
-    delete_connection,
-    get_connections,
-    update_connection,
-)
+from utils import (create_connection, delete_connection, get_connections,
+                   update_connection)
 
 load_dotenv()
 
 
 def connections_app(user_id):
-    st.title("Connections")
+    st.title(":green[Connections]")
     create_new_connection(user_id)
     st.write("###")
     modify_existing_connections(user_id=user_id)
 
 
 def create_new_connection(user_id):
-    st.header("Create Connection")
+    st.header(":orange[Create Connection]")
 
     with st.expander("Create a new connection"):
         with st.form(key="connection_form", clear_on_submit=True):
@@ -50,19 +46,31 @@ def create_new_connection(user_id):
 
 
 def modify_existing_connections(user_id):
-    st.header("Existing Connections")
+    st.header(":orange[Existing Connections]")
     connections = get_connections(user_id=user_id)
     if connections:
+        cols = st.columns(4)
+        cols[0].markdown("#### Name")
+        cols[1].markdown("#### Type")
+        cols[2].markdown("#### Update")
+        cols[3].markdown("#### Delete")
+
         st.write("---")
         for connection in connections:
             connection_id = connection["connection_id"]
             connection_name = connection["connection_name"]
             connection_type = connection["connection_type"]
 
-            cols = st.columns(5)
-            cols[0].markdown(f"##### :green[{connection_name}]")
-            cols[1].markdown(f"##### :red[{connection_type}]")
-            if cols[2].button("Update", key=f"update_button_{connection_id}"):
+            cols = st.columns(4)
+            cols[0].markdown(
+                f'#### <a href="http://localhost:8501/chat_sessions?user_id={user_id}&connection_id={connection_id}" target="_self">{connection_name}</a>',
+                unsafe_allow_html=True,
+            )
+            if connection_type.lower() == "postgres":
+                cols[1].markdown(f"##### :green[{connection_type}]")
+            else:
+                cols[1].markdown(f"##### :orange[{connection_type}]")
+            if cols[2].button("⬆️", key=f"update_button_{connection_id}"):
                 st.session_state.update_id = connection_id
             if (
                 "update_id" in st.session_state
@@ -105,13 +113,13 @@ def modify_existing_connections(user_id):
                 if st.button(label="Close"):
                     del st.session_state.update_id
 
-            if cols[3].button("Delete", key=f"delete_button_{connection_id}"):
+            if cols[3].button(
+                "🗑️", key=f"delete_button_{connection_id}", type="secondary"
+            ):
                 st.write(f"Deleting connection {connection_id}")
                 if delete_connection(connection_id):
                     st.experimental_rerun()
 
-            if cols[4].button("Chat", key=f"chat_button_{connection_id}"):
-                chat_sessions(user_id=user_id, connection_id=connection_id)
             st.write("---")
     else:
         st.write("You don't have any connections yet.")

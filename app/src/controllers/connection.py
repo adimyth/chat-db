@@ -22,16 +22,20 @@ supabase: Client = create_client(
 
 
 @connection_router.get("/")
-def get_connection(user_id: str) -> Any:
+def get_connection(user_id: str, connection_id: str = None) -> Any:
     # return error response if user_id is not provided
     if not user_id:
         return HTTPException(status_code=400, detail="user_id is required")
+
+    query_dict = {"user_id": user_id}
+    if connection_id:
+        query_dict["connection_id"] = connection_id
 
     try:
         response = (
             supabase.from_("db_connections")
             .select("*")
-            .eq("user_id", user_id)
+            .match(query_dict)
             .execute()
             .dict()["data"]
         )
