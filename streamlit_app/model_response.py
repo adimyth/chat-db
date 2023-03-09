@@ -1,6 +1,6 @@
 from urllib.parse import quote_plus
 
-
+import datetime
 from dotenv import load_dotenv
 from langchain import OpenAI
 from llama_index import GPTSQLStructStoreIndex, LLMPredictor, SQLDatabase
@@ -33,10 +33,11 @@ class ModelResponse:
     def create_index(self, table_name):
         table_name = table_name.replace(" ", "_").lower()
         sql_database = SQLDatabase(self._engine, include_tables=[table_name])
+        # TODO: Play around with more models
         # changing predictor from `text-davinci-003` to `text-embedding-ada-002`
-        llm_predictor = LLMPredictor(
-            llm=OpenAI(temperature=0, model_name="text-embedding-ada-002")
-        )
+        # llm_predictor = LLMPredictor(
+        #     llm=OpenAI(temperature=0, model_name="text-embedding-ada-002")
+        # )
         # pprint(sql_database.metadata_obj.tables[f"analytics.{table_name}"])
         self.index = GPTSQLStructStoreIndex(
             [],
@@ -44,6 +45,9 @@ class ModelResponse:
             sql_database=sql_database,
             table_name=f"{table_name}",
         )
+        # you can optionally save the index to disk
+        self.index.save_to_disk("index.json")
+        # TODO: We can optionally load the index from disk based on connection_id, I guess
 
     def generate_response(self, user_input):
         query_response = self.index.query(user_input, mode="default")
@@ -51,6 +55,7 @@ class ModelResponse:
         print("\n\n\n")
         print("[INFO] User Input: ", user_input)
         print("[INFO] SQL Query: ", sql_query)
+        # TODO: Need to format this properly
         list_reponse = [str(tup[0]) for tup in eval(query_response.response)]
         final_response = ", ".join(list_reponse)
         print("[INFO] Model Response: ", final_response)

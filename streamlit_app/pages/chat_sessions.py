@@ -27,7 +27,7 @@ def chat_sessions(user_id: str, connection_id: str):
     st.write("###")
 
     # create a form to create a new chat session which takes in a chat title
-    with st.form("create_chat_session"):
+    with st.form("create_chat_session", clear_on_submit=True):
         chat_title = st.text_input(
             "Create a new chat session:", placeholder="Chat title, e.g. 'Chat 1'"
         )
