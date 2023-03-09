@@ -1,29 +1,107 @@
-import os
-
 import streamlit as st
-from dotenv import load_dotenv
-from pages.connection import connections_app
-from streamlit_supabase_auth import login_form, logout_button
-
-load_dotenv()
+import webbrowser
 
 
-def login():
-    st.set_page_config(page_title="Chat DB", page_icon=":speak_no_evil:")
+def landing_page():
+    # Setting the title and favicon
+    st.set_page_config(page_title="Chat DB", page_icon=":speech_balloon:", initial_sidebar_state="collapsed")
 
-    session = login_form(
-        url=os.getenv("SUPABASE_URL"),
-        apiKey=os.getenv("SUPABASE_KEY"),
-        # Social logins are not working. Refer - https://github.com/sweatybridge/streamlit-supabase-auth/issues/15
-        # providers=["google", "github"],
+    # add a sign up and sign in button at the top right
+    # st.sidebar.button("Sign up")
+    # st.sidebar.button("Sign in")
+
+    # Adding a header image
+    # header_image = 'header.jpg'
+    # st.image(header_image, use_column_width=True)
+
+    # Adding the title and subheading
+    st.write(
+        """
+    # Chat DB
+    ## *Query your database the way you talk*
+    """
     )
 
-    if session:
-        with st.sidebar:
-            st.write(f"Welcome {session['user']['email']}")
-            logout_button()
-        connections_app(session["user"]["id"])
+    # Adding a description section
+    st.write(
+        """
+    ### :orange[What is Chat DB?]
+    Chat DB is a revolutionary new way of querying your databases using natural language. With Chat DB, you can easily communicate with your database by simply typing out your queries in the same way you would talk to a human. No more struggling with complicated SQL syntax - with Chat DB, you can get the information you need in seconds.
+    """
+    )
+
+    # Adding a button to the sign-up page
+    st.write(
+        """
+    ### :orange[Try Chat DB today!]
+    Ready to experience the power of natural language database querying? Sign up for Chat DB today and start exploring your data in a whole new way.
+    """
+    )
+    signup_button()
+
+    st.write(
+        """
+    ### :orange[How does it work?]
+    Chat DB is incredibly easy to use. Simply sign up and connect your Postgres or MySQL database, and you're ready to start querying. Once you're connected, you can create multiple chat sessions, each one displaying a list of tables against which you can query and converse. You can even save your sessions, so you can pick up right where you left off.
+        """
+    )
+
+    # Adding a demo video section
+    st.write(
+        """
+    ### :orange[See Chat DB in action]
+    Watch this short video to see how Chat DB works.
+    """
+    )
+
+    # Adding a video placeholder
+    video_file = open("demo.mp4", "rb")
+    video_bytes = video_file.read()
+    st.video(video_bytes)
+
+    st.write(
+        """
+        ### :orange[Benefits of Chat DB]
+        With Chat DB, you can save time and effort by using natural language to communicate with your database. Say goodbye to the frustration of trying to remember complicated SQL syntax or spending hours writing out complex queries. Chat DB makes it easy to get the information you need quickly and easily.
+        """
+    )
+
+    # Adding a footer image
+    # footer_image = "footer.jpg"
+    # st.image(footer_image, use_column_width=True)
+
+
+def signup_button():
+    button_text = "Sign up"
+    button_bg_color = "#0077c2"
+    button_text_color = "#ffffff"
+    button_border_radius = "5px"
+    button_padding = "10px 20px"
+
+    button_style = f"""
+        <style>
+            .stButton button {{
+                background-color: {button_bg_color};
+                color: {button_text_color};
+                border-radius: {button_border_radius};
+                padding: {button_padding};
+                font-size: 16px;
+                font-weight: bold;
+                text-transform: uppercase;
+                cursor: pointer;
+                transition: all 0.3s ease-in-out;
+            }}
+            .stButton button:hover {{
+                background-color: #0061a8;
+            }}
+        </style>
+    """
+
+    st.markdown(button_style, unsafe_allow_html=True)
+
+    if st.button(button_text):
+        webbrowser.open("http://localhost:8501/signup")
 
 
 if __name__ == "__main__":
-    login()
+    landing_page()

@@ -17,7 +17,7 @@ def get_user_chats(user_id, connection_id):
 
 
 def chat_sessions(user_id: str, connection_id: str):
-    st.set_page_config(page_title="Chat DB", page_icon=":speak_no_evil:")
+    st.set_page_config(page_title="Chat DB", page_icon=":speak_no_evil:", initial_sidebar_state="collapsed")
 
     connection_details = get_connections(user_id, connection_id)
     if len(connection_details) > 0:

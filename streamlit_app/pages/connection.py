@@ -29,7 +29,7 @@ def create_new_connection(user_id):
             db_user = st.text_input(label="DB User")
             db_password = st.text_input(label="DB Password", type="password")
 
-            if st.form_submit_button(label="Create Connection"):
+            if st.form_submit_button(label="🚀"):
                 st.write("Creating connection")
 
                 payload = {
@@ -49,11 +49,11 @@ def modify_existing_connections(user_id):
     st.header(":orange[Existing Connections]")
     connections = get_connections(user_id=user_id)
     if connections:
-        cols = st.columns(4)
-        cols[0].markdown("#### Name")
-        cols[1].markdown("#### Type")
-        cols[2].markdown("#### Update")
-        cols[3].markdown("#### Delete")
+        # cols = st.columns(4)
+        # cols[0].markdown("#### Name")
+        # cols[1].markdown("#### Type")
+        # cols[2].markdown("#### Update")
+        # cols[3].markdown("#### Delete")
 
         st.write("---")
         for connection in connections:
@@ -70,7 +70,7 @@ def modify_existing_connections(user_id):
                 cols[1].markdown(f"##### :green[{connection_type}]")
             else:
                 cols[1].markdown(f"##### :orange[{connection_type}]")
-            if cols[2].button("⬆️", key=f"update_button_{connection_id}"):
+            if cols[2].button("📤", key=f"update_button_{connection_id}"):
                 st.session_state.update_id = connection_id
             if (
                 "update_id" in st.session_state
@@ -114,7 +114,7 @@ def modify_existing_connections(user_id):
                     del st.session_state.update_id
 
             if cols[3].button(
-                "🗑️", key=f"delete_button_{connection_id}", type="secondary"
+                "❌", key=f"delete_button_{connection_id}", type="secondary"
             ):
                 st.write(f"Deleting connection {connection_id}")
                 if delete_connection(connection_id):

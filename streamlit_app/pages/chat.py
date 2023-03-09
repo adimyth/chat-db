@@ -14,9 +14,11 @@ from utils import (
 
 
 # save session chat history
-def save_session(user_id, chat_id):
+def save_session(user_id, connection_id, chat_id):
     payload = {}
     payload["chat_history"] = {}
+
+    # new chat session
     for i in range(len(st.session_state["generated"])):
         payload["chat_history"][str(i + 1)] = {
             "ai": st.session_state["generated"][i],
@@ -34,7 +36,11 @@ def save_session(user_id, chat_id):
 
 def chat_app():
     # Set page configs
-    st.set_page_config(page_title="Chat DB", page_icon=":speak_no_evil:")
+    st.set_page_config(
+        page_title="Chat DB",
+        page_icon=":speak_no_evil:",
+        initial_sidebar_state="collapsed",
+    )
     st.title(":orange[Chat DB]")
 
     # fetch user_id, connection_id and chat_id from the query params
@@ -68,12 +74,12 @@ def chat_app():
         st.session_state["past"] = []
 
     with st.form("chat_form", clear_on_submit=True):
-        user_input = st.text_area("You:", key="input")
+        user_input = st.text_area("", key="input")
         submit_button = st.form_submit_button(label="Submit")
 
     # add a button to save the session
     if st.button("Save Session"):
-        save_session(user_id, chat_id)
+        save_session(user_id, connection_id, chat_id)
 
     # fetch & display chat history
     messages = []
@@ -82,6 +88,7 @@ def chat_app():
         for key, value in chat_history.items():
             messages.append(message(value[user_id], is_user=True, key=key + "_user"))
             messages.append(message(value["ai"], key=key))
+            st.write("---")
 
     # generate ai response
     if submit_button:
@@ -98,6 +105,7 @@ def chat_app():
                 message(st.session_state["past"][i], is_user=True, key=f"{key}_user")
             )
             messages.append(message(st.session_state["generated"][i], key=key))
+            st.write("---")
 
 
 if __name__ == "__main__":
