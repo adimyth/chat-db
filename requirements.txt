@@ -5,6 +5,7 @@ streamlit
 streamlit-chat
 sqlalchemy
 mysql-connector-python
+pymysql
 black
 isort
 streamlit-supabase-auth
