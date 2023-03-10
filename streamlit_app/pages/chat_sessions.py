@@ -1,7 +1,13 @@
+import os
+
 import requests
 import streamlit as st
-from utils import create_chat_session_history, get_connections, convert_timestamp
+from dotenv import load_dotenv
 from streamlit_supabase_auth import logout_button
+from utils import (convert_timestamp, create_chat_session_history,
+                   get_connections)
+
+load_dotenv()
 
 
 def get_user_chats(user_id, connection_id):
@@ -17,7 +23,11 @@ def get_user_chats(user_id, connection_id):
 
 
 def chat_sessions(user_id: str, connection_id: str):
-    st.set_page_config(page_title="Chat DB", page_icon=":speak_no_evil:", initial_sidebar_state="collapsed")
+    st.set_page_config(
+        page_title="Chat DB",
+        page_icon=":speak_no_evil:",
+        initial_sidebar_state="collapsed",
+    )
 
     connection_details = get_connections(user_id, connection_id)
     if len(connection_details) > 0:
@@ -54,8 +64,10 @@ def chat_sessions(user_id: str, connection_id: str):
 
             cols = st.columns(2)
             cols[1].markdown(f"##### :orange[{created_at}]")
+
+            url = f"{os.environ.get('APP_URL')}/chat?user_id={user_id}&connection_id={connection_id}&chat_id={chat_id}"
             cols[0].markdown(
-                f'#### <a href="http://localhost:8501/chat?user_id={user_id}&connection_id={connection_id}&chat_id={chat_id}" target="_self">{chat_title}</a>',
+                f'#### <a href="{url}" target="_self">{chat_title}</a>',
                 unsafe_allow_html=True,
             )
 

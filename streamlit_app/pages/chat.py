@@ -5,12 +5,8 @@ from datetime import datetime
 import streamlit as st
 from model_response import ModelResponse
 from streamlit_chat import message
-from utils import (
-    get_chat_session_history,
-    update_chat_session_history,
-    decrypt_password,
-    get_connections,
-)
+from utils import (decrypt_password, get_chat_session_history, get_connections,
+                   update_chat_session_history)
 
 
 # save session chat history

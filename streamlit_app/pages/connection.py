@@ -1,6 +1,7 @@
+import os
+
 import streamlit as st
 from dotenv import load_dotenv
-from pages.chat_sessions import chat_sessions
 from utils import (create_connection, delete_connection, get_connections,
                    update_connection)
 
@@ -49,12 +50,6 @@ def modify_existing_connections(user_id):
     st.header(":orange[Existing Connections]")
     connections = get_connections(user_id=user_id)
     if connections:
-        # cols = st.columns(4)
-        # cols[0].markdown("#### Name")
-        # cols[1].markdown("#### Type")
-        # cols[2].markdown("#### Update")
-        # cols[3].markdown("#### Delete")
-
         st.write("---")
         for connection in connections:
             connection_id = connection["connection_id"]
@@ -62,8 +57,9 @@ def modify_existing_connections(user_id):
             connection_type = connection["connection_type"]
 
             cols = st.columns(4)
+            url = f"{os.environ.get('APP_URL')}/chat_sessions?user_id={user_id}&connection_id={connection_id}"
             cols[0].markdown(
-                f'#### <a href="http://localhost:8501/chat_sessions?user_id={user_id}&connection_id={connection_id}" target="_self">{connection_name}</a>',
+                f'#### <a href="{url}" target="_self">{connection_name}</a>',
                 unsafe_allow_html=True,
             )
             if connection_type.lower() == "postgres":

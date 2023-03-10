@@ -1,6 +1,6 @@
+import datetime
 from urllib.parse import quote_plus
 
-import datetime
 from dotenv import load_dotenv
 from langchain import OpenAI
 from llama_index import GPTSQLStructStoreIndex, LLMPredictor, SQLDatabase
@@ -45,9 +45,8 @@ class ModelResponse:
             sql_database=sql_database,
             table_name=f"{table_name}",
         )
-        # you can optionally save the index to disk
-        self.index.save_to_disk("index.json")
-        # TODO: We can optionally load the index from disk based on connection_id, I guess
+        # you can optionally save the index to disk & can load it later
+        # self.index.save_to_disk("index.json")
 
     def generate_response(self, user_input):
         query_response = self.index.query(user_input, mode="default")

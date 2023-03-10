@@ -1,9 +1,9 @@
 import os
 
 import mysql.connector
-from cryptography.fernet import Fernet
 import requests
 import streamlit as st
+from cryptography.fernet import Fernet
 
 
 def get_connections(user_id: str, connection_id: str = None):

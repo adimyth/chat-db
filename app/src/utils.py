@@ -1,6 +1,6 @@
 import os
-
 from urllib.parse import quote_plus
+
 from cryptography.fernet import Fernet
 from dotenv import load_dotenv
 from mysql.connector import Error

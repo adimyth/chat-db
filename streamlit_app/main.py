@@ -1,18 +1,19 @@
-import streamlit as st
+import os
 import webbrowser
+
+import streamlit as st
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def landing_page():
     # Setting the title and favicon
-    st.set_page_config(page_title="Chat DB", page_icon=":speech_balloon:", initial_sidebar_state="collapsed")
-
-    # add a sign up and sign in button at the top right
-    # st.sidebar.button("Sign up")
-    # st.sidebar.button("Sign in")
-
-    # Adding a header image
-    # header_image = 'header.jpg'
-    # st.image(header_image, use_column_width=True)
+    st.set_page_config(
+        page_title="Chat DB",
+        page_icon=":speech_balloon:",
+        initial_sidebar_state="collapsed",
+    )
 
     # Adding the title and subheading
     st.write(
@@ -66,10 +67,6 @@ def landing_page():
         """
     )
 
-    # Adding a footer image
-    # footer_image = "footer.jpg"
-    # st.image(footer_image, use_column_width=True)
-
 
 def signup_button():
     button_text = "Sign up"
@@ -100,7 +97,8 @@ def signup_button():
     st.markdown(button_style, unsafe_allow_html=True)
 
     if st.button(button_text):
-        webbrowser.open("http://localhost:8501/signup")
+        url = f"{os.environ.get('APP_URL')}/signup"
+        webbrowser.open(url)
 
 
 if __name__ == "__main__":
