@@ -83,7 +83,7 @@ def chat_app():
 
     # add a button to save the session
     if st.button("Save Session"):
-        save_session(user_id, connection_id, chat_id)
+        save_session(user_id, chat_id)
 
     # fetch & display chat history
     messages = []
