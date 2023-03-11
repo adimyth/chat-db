@@ -16,7 +16,7 @@ from utils import (
 
 
 # save session chat history
-def save_session(user_id, connection_id, chat_id):
+def save_session(user_id, chat_id):
     payload = {}
     payload["chat_history"] = {}
 
