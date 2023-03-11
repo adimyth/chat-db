@@ -34,7 +34,7 @@ def save_session(user_id, chat_id):
         chat_id,
         payload,
     )
-    st.experimental_rerun()
+    # st.experimental_rerun()
 
 
 # TODO: check why when clicking on save session button, the existing chat session is printed twice?

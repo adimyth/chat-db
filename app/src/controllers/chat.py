@@ -57,8 +57,7 @@ def update_chat(chat_id: str, chat: ChatUpdate) -> Chat:
     try:
         if chat.chat_history:
             existing_chat = get_chat_history(chat_id)
-            if existing_chat:
-                chat.chat_history = {**existing_chat, **chat.chat_history}
+            chat.chat_history = {**existing_chat, **chat.chat_history}
 
         response = (
             supabase.from_("chat_session")
