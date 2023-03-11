@@ -4,8 +4,7 @@ import requests
 import streamlit as st
 from dotenv import load_dotenv
 from streamlit_supabase_auth import logout_button
-from utils import (convert_timestamp, create_chat_session_history,
-                   get_connections)
+from utils import convert_timestamp, create_chat_session_history, get_connections
 
 load_dotenv()
 

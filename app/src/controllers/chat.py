@@ -55,6 +55,10 @@ def update_chat(chat_id: str, chat: ChatUpdate) -> Chat:
     if not chat_id:
         raise HTTPException(status_code=400, detail="chat_id is required")
     try:
+        if chat.chat_history:
+            existing_chat = get_chat_history(chat_id)
+            chat.chat_history = {**existing_chat, **chat.chat_history}
+
         response = (
             supabase.from_("chat_session")
             .update(chat.dict(exclude_unset=True))
@@ -67,3 +71,14 @@ def update_chat(chat_id: str, chat: ChatUpdate) -> Chat:
         raise HTTPException(status_code=400, detail="Invalid chat_id")
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+def get_chat_history(chat_id: str) -> str:
+    response = (
+        supabase.from_("chat_session")
+        .select("chat_history")
+        .eq("chat_id", chat_id)
+        .execute()
+        .dict()["data"][0]
+    )
+    return response["chat_history"]

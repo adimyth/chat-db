@@ -2,8 +2,12 @@ import os
 
 import streamlit as st
 from dotenv import load_dotenv
-from utils import (create_connection, delete_connection, get_connections,
-                   update_connection)
+from utils import (
+    create_connection,
+    delete_connection,
+    get_connections,
+    update_connection,
+)
 
 load_dotenv()
 

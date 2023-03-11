@@ -1,12 +1,18 @@
 import random
 import string
+import time
 from datetime import datetime
+from decimal import Decimal
 
 import streamlit as st
 from model_response import ModelResponse
 from streamlit_chat import message
-from utils import (decrypt_password, get_chat_session_history, get_connections,
-                   update_chat_session_history)
+from utils import (
+    decrypt_password,
+    get_chat_session_history,
+    get_connections,
+    update_chat_session_history,
+)
 
 
 # save session chat history
@@ -16,7 +22,7 @@ def save_session(user_id, connection_id, chat_id):
 
     # new chat session
     for i in range(len(st.session_state["generated"])):
-        payload["chat_history"][str(i + 1)] = {
+        payload["chat_history"][str(int(time.time()))] = {
             "ai": st.session_state["generated"][i],
             user_id: st.session_state["past"][i],
             "timestamp": st.session_state["timestamp"],
@@ -28,8 +34,10 @@ def save_session(user_id, connection_id, chat_id):
         chat_id,
         payload,
     )
+    st.experimental_rerun()
 
 
+# TODO: check why when clicking on save session button, the existing chat session is printed twice?
 def chat_app():
     # Set page configs
     st.set_page_config(

@@ -2,11 +2,12 @@ import os
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import JSONResponse
 from supabase import Client, create_client
 
 from app.src.models.connection import (  # ConnectionOrError,
-    ConnectionCreateRequest, ConnectionUpdateRequest)
+    ConnectionCreateRequest,
+    ConnectionUpdateRequest,
+)
 from app.src.utils import check_valid_connection, encrypt_password
 
 connection_router = APIRouter(
@@ -48,8 +49,8 @@ def get_connection(user_id: str, connection_id: str = None) -> Any:
 def create_connection(
     connection: ConnectionCreateRequest,
 ) -> Any:
-    # save connection only when it is valid
-    if check_valid_connection(connection):
+    is_valid, msg = check_valid_connection(connection)
+    if is_valid:
         new_connection = connection.dict()
         del new_connection["db_password"]
         new_connection["db_encrypted_password"] = encrypt_password(
@@ -63,7 +64,7 @@ def create_connection(
         )
         return response
     else:
-        raise HTTPException(status_code=400, detail="Invalid connection")
+        raise HTTPException(status_code=400, detail=msg)
 
 
 @connection_router.patch("/")

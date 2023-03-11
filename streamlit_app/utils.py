@@ -1,6 +1,5 @@
 import os
 
-import mysql.connector
 import requests
 import streamlit as st
 from cryptography.fernet import Fernet
@@ -28,10 +27,8 @@ def create_connection(payload):
     if response.ok:
         st.success("Connection created successfully")
         st.experimental_rerun()
-    elif response.status_code == 400:
-        st.error(response.json()["detail"])
     else:
-        st.error("Failed to create connection")
+        st.error(response.json()["detail"])
 
 
 def update_connection(connection_id, payload):
@@ -60,7 +57,6 @@ def delete_connection(connection_id):
         st.error("Failed to delete connection")
 
 
-# fetches a particular chat session from the database given user_id and chat_id
 def get_chat_session_history(user_id, connection_id, chat_id):
     response = requests.get(
         f"http://localhost:8000/chat?user_id={user_id}&connection_id={connection_id}&chat_id={chat_id}"
@@ -113,5 +109,4 @@ def decrypt_password(token: str) -> str:
 
 
 def convert_timestamp(timestamp):
-    # convert 2023-03-08T15:36:56.931331+00:00 to 2023-03-08 15:36:56
     return timestamp.split(".")[0].replace("T", " ")
