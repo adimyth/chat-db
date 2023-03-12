@@ -12,9 +12,11 @@ Chat DB is incredibly easy to use. Simply sign up and connect your Postgres or M
 
 ### Demo
 
-[![Chat DB Demo](https://img.youtube.com/vi/1Q2Z3Z4Z5Z6/0.jpg)](https://www.youtube.com/watch?v=1Q2Z3Z4Z5Z6)
 
-## How to test it locally
+https://user-images.githubusercontent.com/26377913/224538856-012ee2e4-9de8-4b36-ab38-628684ad5ed8.mov
+
+
+## How to run it locally?
 
 ### Setup environment
 
